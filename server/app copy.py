@@ -3,7 +3,6 @@ import uvicorn
 
 from activity_model import ActivityModel
 from db_interface import DBInterface
-from vote_model import VoteModel
 
 
 app = FastAPI()
@@ -64,14 +63,6 @@ def add_activity(activity: ActivityModel):
     if not result:
         return {"message": "Failed to insert activity"}
     return {"message": "Activity received", "activity_id": result}
-
-@app.post("/add-vote")
-def add_vote(vote: VoteModel):
-    db_interface = DBInterface()
-    result = db_interface.insert_activity(vote)
-    if not result:
-        return {"message": "Vote received"}
-    return {"message": "Failed to insert vote"}
 
 
 if __name__ == "__main__":
