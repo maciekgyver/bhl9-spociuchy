@@ -15,13 +15,15 @@ export const Input = React.forwardRef(
           ref={ref}
           className={clsx(
             "w-full p-2 rounded-xl transition-all",
-            { "border border-red-600": !!error },
+            {
+              "border border-red-600 outline outline-red-600": !!error,
+            },
             className
           )}
           placeholder="Type a question..."
           {...props}
         />
-        {error && <p>dupa</p>}
+        {error && <p className="text-red-600">{error}</p>}
       </div>
     );
   }

@@ -49,6 +49,7 @@ const TIME_OPTIONS: SelectOption[] = [
 export const NewEventPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
   const {
     register,
     handleSubmit,
@@ -69,6 +70,7 @@ export const NewEventPage = () => {
         throw new Error(`HTTP error: Status ${response.status}`);
       }
       setError(null);
+      setSuccess(true);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -86,11 +88,11 @@ export const NewEventPage = () => {
     await addNewActivity(newEventData);
   };
 
-  const {
-    question: questionError,
-    group: groupError,
-    delay: delayError,
-  } = errors;
+  const { question: questionError } = errors;
+
+  if (success) {
+    return <p className="text-green-500">Success!</p>;
+  }
 
   return (
     <form
@@ -98,7 +100,12 @@ export const NewEventPage = () => {
       onSubmit={handleSubmit(onSubmit)}
     >
       <p>new event</p>
-      <Input {...register("question", { required: true })} />
+      <Input
+        error={questionError?.message}
+        {...register("question", {
+          required: "Question is required",
+        })}
+      />
       <Select
         options={GROUP_OPTIONS}
         {...register("group", { required: true, valueAsNumber: true })}
@@ -107,10 +114,9 @@ export const NewEventPage = () => {
         options={TIME_OPTIONS}
         {...register("delay", { required: true, valueAsNumber: true })}
       />
-      {questionError && <p>{questionError.message}</p>}
-      {groupError && <p>Group is required</p>}
-      {delayError && <p>Time is required</p>}
-      <button>Submit</button>
+      {error && <p className="text-red-500">{error}</p>}
+      {loading && <p>Loading...</p>}
+      <button disabled={loading}>Submit</button>
     </form>
   );
 };
