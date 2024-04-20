@@ -5,6 +5,7 @@ export type NewEventData = {
 };
 
 export type ExistingEventData = {
+  id: string;
   question: string;
   group: string;
   timestamp: number;

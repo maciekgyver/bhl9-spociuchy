@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import { EventContainer } from "../components/EventContainer";
 
 const MOCK = {
   question: "What is the capital of France?",
@@ -17,7 +16,7 @@ interface ResponseColumnProps {
 const ResponseColumn = ({ names, heading }: ResponseColumnProps) => {
   return (
     <div className="flex-1 flex flex-col items-center gap-y-6">
-      <h3 className="text-2xl">{heading}</h3>
+      <h3 className="text-xl sm:text-2xl">{heading}</h3>
       <div className="flex flex-col items-center gap-y-1">
         {names.map((name) => (
           <p>{name}</p>
@@ -31,8 +30,9 @@ export const EventPage = () => {
   const { eventId } = useParams<{ eventId: string }>();
   return (
     <div className="flex flex-col w-full items-center gap-y-8">
-      <h1 className="text-6xl">Event page {eventId}</h1>
-      <EventContainer eventData={MOCK} />
+      <h1 className="text-4xl sm:text-6xl">Event page {eventId}</h1>
+      <h2 className="text-2xl sm:text-4xl">{MOCK.question}</h2>
+      <p className="text-xl sm:text-2xl">{MOCK.group}</p>
       <div className="flex w-full">
         <ResponseColumn heading="Accepted" names={MOCK.accepted} />
         <ResponseColumn heading="Rejected" names={MOCK.rejected} />
