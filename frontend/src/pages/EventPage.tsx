@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 
-const MOCK = {
+const EVENT_MOCK = {
+  id: "1",
   question: "What is the capital of France?",
   timestamp: Date.now(),
   group: "group 1",
@@ -31,11 +32,11 @@ export const EventPage = () => {
   return (
     <div className="flex flex-col w-full items-center gap-y-8">
       <h1 className="text-4xl sm:text-6xl">Event page {eventId}</h1>
-      <h2 className="text-2xl sm:text-4xl">{MOCK.question}</h2>
-      <p className="text-xl sm:text-2xl">{MOCK.group}</p>
+      <h2 className="text-2xl sm:text-4xl">{EVENT_MOCK.question}</h2>
+      <p className="text-xl sm:text-2xl">{EVENT_MOCK.group}</p>
       <div className="flex w-full">
-        <ResponseColumn heading="Accepted" names={MOCK.accepted} />
-        <ResponseColumn heading="Rejected" names={MOCK.rejected} />
+        <ResponseColumn heading="Accepted" names={EVENT_MOCK.accepted} />
+        <ResponseColumn heading="Rejected" names={EVENT_MOCK.rejected} />
       </div>
     </div>
   );
