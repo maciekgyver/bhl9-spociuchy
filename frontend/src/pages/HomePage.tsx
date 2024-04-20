@@ -9,7 +9,7 @@ const MOCKED_EVENT: ExistingEventData = {
 
 function HomePage() {
   return (
-    <div>
+    <div className="w-full">
       <EventContainer eventData={MOCKED_EVENT} />
     </div>
   );
