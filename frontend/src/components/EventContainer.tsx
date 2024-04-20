@@ -39,7 +39,7 @@ export const EventContainer = ({ eventData, hasLink }: EventContainerProps) => {
       {hasLink ? (
         <Link
           to={`/event/${id}`}
-          className="w-full flex flex-col items-center hover:bg-gray-800 transition-all duration-200 px-2 py-4 rounded-xl border bg-gray-900 "
+          className="w-full flex flex-col items-center border-2 border-transparent hover:border-indigo-600 transition-all duration-200 px-2 py-4 rounded-xl border-white"
         >
           <EventInfo eventData={eventData} />
         </Link>
