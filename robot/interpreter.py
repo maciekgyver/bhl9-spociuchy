@@ -13,18 +13,21 @@ class Interpreter:
 
     def execute_program(self):
         for i in self._instructions:
-            match i["action"]:
-                case "F":
-                    self._robot.reverse_drive(i["speed"])
-                case "R":
-                    self._robot.forward_drive(i["speed"])
-                case "SL":
-                    self._robot.spin_left(i["speed"])
-                case "SR":
-                    self._robot.spin_right(i["speed"])
-                case "P":
-                    self._robot.play_melody(i["melody"])
-                    self._robot.turn_off_spreaker()
-                    continue
-            sleep(i["time"])
-            self._robot.stop()
+            execute_instruction(i)
+
+    def execute_instruction(self, instruction):
+        match i["action"]:
+            case "F":
+                self._robot.reverse_drive(i["speed"])
+            case "R":
+                self._robot.forward_drive(i["speed"])
+            case "SL":
+                self._robot.spin_left(i["speed"])
+            case "SR":
+                self._robot.spin_right(i["speed"])
+            case "P":
+                self._robot.play_melody(i["melody"])
+                self._robot.turn_off_spreaker()
+                return 
+        sleep(i["time"])
+        self._robot.stop()
