@@ -3,7 +3,7 @@ from sqlalchemy import CursorResult, create_engine, text
 
 from activity_model import ActivityModel
 from params import CONNECTION_STR
-from queries import ACTIVITY_INSERT_QUERY, VOTE_INSERT_QUERY
+from queries import ACTIVITY_INSERT_QUERY, GET_ACTIVE_ACTIVITIY_QUERY, GET_ACTIVITIES_QUERY, VOTE_INSERT_QUERY
 from vote_model import VoteModel
 
 class DBInterface:
@@ -20,7 +20,7 @@ class DBInterface:
             except Exception as e:
                 print(e)
                 return e
-            
+
     def insert_vote(self, vote: VoteModel) -> CursorResult[Any]:
         with self._engine.connect() as conn:
             try:
@@ -30,3 +30,20 @@ class DBInterface:
             except Exception as e:
                 print(e)
                 return e
+
+    def get_activities(self) -> CursorResult[Any]:
+        with self._engine.connect() as conn:
+            try:
+                return conn.execute(text(GET_ACTIVITIES_QUERY)).fetchall()
+            except Exception as e:
+                print(e)
+                return e
+            
+    def get_active_activity(self, current_timestamp: int) -> CursorResult[Any]:
+        with self._engine.connect() as conn:
+            try:
+                return conn.execute(text(GET_ACTIVE_ACTIVITIY_QUERY), current_timestamp=current_timestamp).fetchall()
+            except Exception as e:
+                print(e)
+                return e
+    

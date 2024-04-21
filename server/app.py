@@ -15,29 +15,31 @@ def read_root():
 
 @app.get("/get-activities")
 def get_activities():
-    activities = [
-    {
-        "id": 1,
-        "question": "question 1",
-        "created_at": 1713634879498,
-        "expires_at": 1713634879498,
-        "group": "group_1"
-    },
-    {
-        "id": 2,
-        "question": "test question 2",
-        "created_at": 1713634694439,
-        "expires_at": 1713634694439,
-        "group": "group_1"
-    },
-    {
-        "id": 3,
-        "question": "test question 3",
-        "created_at": 1713634694439,
-        "expires_at": 1713634694439,
-        "group": "group_1"
-    },
-    ]
+    # activities = [
+    # {
+    #     "id": 1,
+    #     "question": "question 1",
+    #     "created_at": 1713634879498,
+    #     "expires_at": 1713634879498,
+    #     "group": "group_1"
+    # },
+    # {
+    #     "id": 2,
+    #     "question": "test question 2",
+    #     "created_at": 1713634694439,
+    #     "expires_at": 1713634694439,
+    #     "group": "group_1"
+    # },
+    # {
+    #     "id": 3,
+    #     "question": "test question 3",
+    #     "created_at": 1713634694439,
+    #     "expires_at": 1713634694439,
+    #     "group": "group_1"
+    # },
+    # ]
+    db_interface = DBInterface()
+    activities = db_interface.get_activities()
     return activities
 
 @app.get("/get-activity/{activity_id}")
@@ -72,6 +74,14 @@ def add_vote(vote: VoteModel):
     if not result:
         return {"message": "Vote received"}
     return {"message": "Failed to insert vote"}
+
+@app.get("/get-active-activity")
+def get_active_activity():
+    db_interface = DBInterface()
+    result = db_interface.get_active_activity()
+    if not result:
+        return {"message": "Failed to get active activity"}
+    return {"message": "Active activity received", "activity": result}
 
 
 if __name__ == "__main__":

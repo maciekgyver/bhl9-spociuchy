@@ -24,3 +24,11 @@ VOTE_INSERT_QUERY = """
         :vote
     );
 """
+
+GET_ACTIVITIES_QUERY = """
+    SELECT * FROM public.activities;
+"""
+
+GET_ACTIVE_ACTIVITIY_QUERY = """
+    SELECT * FROM public.activities WHERE expires_at > :current_timestamp;
+"""
