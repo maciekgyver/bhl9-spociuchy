@@ -13,9 +13,9 @@ class Interpreter:
 
     def execute_program(self):
         for i in self._instructions:
-            execute_instruction(i)
+            self.execute_instruction(i)
 
-    def execute_instruction(self, instruction):
+    def execute_instruction(self, i):
         match i["action"]:
             case "F":
                 self._robot.reverse_drive(i["speed"])
