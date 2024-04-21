@@ -126,7 +126,7 @@ void setup() {
   display.setTextSize(2);
   display.setTextColor(SH110X_WHITE);
   display.setCursor(0, 0);
-  display.println("SpocSystem");
+  display.println("CHOiSE-sys");
   display.println("Use card");
   display.display();
  
