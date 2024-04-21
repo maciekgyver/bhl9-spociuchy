@@ -4,7 +4,7 @@ import { SelectHTMLAttributes } from "react";
 
 export type SelectOption = {
   label: string;
-  value: string;
+  value: number;
 };
 
 interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {

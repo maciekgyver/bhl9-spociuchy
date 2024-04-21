@@ -1,12 +1,14 @@
 export type NewEventData = {
   question: string;
-  group: string;
-  time: string;
+  group_id: number;
+  created_at: number;
+  expires_at: number;
 };
 
 export type ExistingEventData = {
-  id: string;
+  id: number;
   question: string;
   group: string;
-  timestamp: number;
+  created_at: number;
+  expires_at: number;
 };
