@@ -24,8 +24,9 @@ class DBInterface:
     def insert_vote(self, vote: VoteModel) -> CursorResult[Any]:
         with self._engine.connect() as conn:
             try:
-                conn.execute(text(VOTE_INSERT_QUERY), vote)
+                print(conn.execute(text(VOTE_INSERT_QUERY), vote.model_dump()))
                 conn.commit()
                 return
             except Exception as e:
+                print(e)
                 return e

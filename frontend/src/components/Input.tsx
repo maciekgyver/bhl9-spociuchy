@@ -4,17 +4,27 @@ import { InputHTMLAttributes } from "react";
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   className?: string;
+  error?: string;
 }
 
 export const Input = React.forwardRef(
-  ({ className, ...props }: InputProps, ref: any) => {
+  ({ className, error, ...props }: InputProps, ref: any) => {
     return (
-      <input
-        ref={ref}
-        className={clsx("w-full p-2 rounded-xl", className)}
-        placeholder="Type a question..."
-        {...props}
-      />
+      <div className="w-full">
+        <input
+          ref={ref}
+          className={clsx(
+            "w-full p-2 rounded-xl transition-all",
+            {
+              "border border-red-600 outline outline-red-600": !!error,
+            },
+            className
+          )}
+          placeholder="Type a question..."
+          {...props}
+        />
+        {error && <p className="text-red-600">{error}</p>}
+      </div>
     );
   }
 );

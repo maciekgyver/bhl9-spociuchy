@@ -12,8 +12,8 @@ interface EventContainerProps {
 }
 
 const EventInfo = ({ eventData }: EventInfoProps) => {
-  const { question, timestamp, group } = eventData;
-  const [isEventActive, setIsEventActive] = useState(Date.now() < timestamp);
+  const { question, created_at, expires_at, group } = eventData;
+  const [isEventActive, setIsEventActive] = useState(Date.now() < expires_at);
   const onComplete = () => {
     setIsEventActive(false);
   };
@@ -23,9 +23,9 @@ const EventInfo = ({ eventData }: EventInfoProps) => {
       <p className="text-xl sm:text-2xl">{group}</p>
       <div className="text-2xl sm:text-3xl">
         {isEventActive ? (
-          <Countdown date={timestamp} daysInHours onComplete={onComplete} />
+          <Countdown date={expires_at} daysInHours onComplete={onComplete} />
         ) : (
-          `Finished ${new Date(timestamp).toLocaleString("en-GB")}`
+          `Finished ${new Date(expires_at).toLocaleString("en-GB")}`
         )}
       </div>
     </>

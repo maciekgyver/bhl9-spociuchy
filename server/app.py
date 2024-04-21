@@ -68,7 +68,7 @@ def add_activity(activity: ActivityModel):
 @app.post("/add-vote")
 def add_vote(vote: VoteModel):
     db_interface = DBInterface()
-    result = db_interface.insert_activity(vote)
+    result = db_interface.insert_vote(vote)
     if not result:
         return {"message": "Vote received"}
     return {"message": "Failed to insert vote"}
