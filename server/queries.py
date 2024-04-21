@@ -33,9 +33,10 @@ GET_ACTIVITIES_QUERY = """
         JOIN votes ON votes.user_card_number = users.card_number
         WHERE votes.vote = true
     )
-    SELECT activities.id, question, created_at, expires_at, activities.group_id, array_agg(usr.name) FROM public.activities
+    SELECT activities.id, question, created_at, expires_at, groups.group_name, array_agg(usr.name) FROM public.activities
+    JOIN public.groups ON activities.group_id = groups.id
     LEFT JOIN usr ON activities.id = usr.activity_id
-    GROUP BY activities.id, question, expires_at, activities.group_id
+    GROUP BY activities.id, question, expires_at, groups.group_name
     ;
 """
 
@@ -47,15 +48,16 @@ GET_ACTIVITY_QUERY = """
         JOIN votes ON votes.user_card_number = users.card_number
         WHERE votes.vote = true
     )
-    SELECT activities.id, question, created_at, expires_at, activities.group_id, array_agg(usr.name) FROM public.activities
+    SELECT activities.id, question, created_at, expires_at, groups.group_name, array_agg(usr.name) FROM public.activities
+    JOIN public.groups ON activities.group_id = groups.id
     LEFT JOIN usr ON activities.id = usr.activity_id
     WHERE activities.id = :activity_id
-    GROUP BY activities.id, question, expires_at, activities.group_id
+    GROUP BY activities.id, question, expires_at, groups.group_name
     ;
 """
 
 GET_ACTIVE_ACTIVITIY_QUERY = """
-    SELECT activities.id, question, expires_at, activities.group_id FROM public.activities
+    SELECT activities.id, question, expires_at, groups.group_name FROM public.activities
     JOIN public.groups ON activities.group_id = groups.id
     JOIN public.users_groups ON groups.id = users_groups.group_id
     JOIN public.users ON users_groups.user_id = users.id  
@@ -64,7 +66,8 @@ GET_ACTIVE_ACTIVITIY_QUERY = """
 """
 
 GET_ACTIVE_ACTIVITIY_ONLY_TS_QUERY = """
-    SELECT activities.id, question, created_at, expires_at, activities.group_id FROM public.activities
+    SELECT activities.id, question, created_at, expires_at, groups.group_name FROM public.activities
+    JOIN public.groups ON activities.group_id = groups.id
     WHERE expires_at > :current_timestamp
     ORDER BY expires_at DESC LIMIT 1;
 """

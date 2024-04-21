@@ -96,7 +96,7 @@ String question = "";
 bool decision;
 
 float duration = 0;
-int group;
+String group = "";
 
 
 void setup() {
@@ -352,7 +352,7 @@ void parseJsonString(String jsonString) {
     activity_id = doc["id"];
     question = String(doc["question"]);
     duration = long(doc["duration"]) * 1000;
-    group = doc["group"];
+    group = String(doc["group"]);
 
     Serial.print("ID: ");
     Serial.println(activity_id);
