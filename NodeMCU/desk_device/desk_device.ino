@@ -19,6 +19,8 @@
 #include <Adafruit_SH110X.h>
 #include <MFRC522.h>
 
+#include <ArduinoJson.h>
+
 #include "arduino_secrets.h"
 
 #define RST_PIN         D4
@@ -71,9 +73,11 @@ static const unsigned char PROGMEM logo16_glcd_bmp[] =
 const char* ssid = SECRET_SSID;
 const char* password = SECRET_PASS;
 
+const size_t bufferSize = JSON_OBJECT_SIZE(4);
+
 //Your Domain name with URL path or IP address with path
-String serverGETName = "http://192.168.151.97:8000/get-active-poll";
-const char* serverPOSTName = "http://192.168.151.97:8000/add-vote";
+String serverGETName = "http://172.20.10.3:8000/get-active-poll";
+const char* serverPOSTName = "http://172.20.10.3:8000/add-vote";
 
 // the following variables are unsigned longs because the time, measured in
 // milliseconds, will quickly become a bigger number than can be stored in an int.
@@ -90,6 +94,9 @@ String rfid_id = "";
 int activity_id;
 String question = "";
 bool decision;
+
+float duration = 0;
+int group;
 
 
 void setup() {
@@ -114,6 +121,7 @@ void setup() {
 
   display.begin(i2c_Address, true); // Address 0x3C default
   display.display();
+  display.clearDisplay();
 
   display.setTextSize(1);
   display.setTextColor(SH110X_WHITE);
@@ -129,14 +137,17 @@ void setup() {
 void loop() {
   if (rfid_id == "") getRFID();
 
-  if (millis() - lastConnectionTime > timerDelay && !isActivePoll) {
+  if (millis() - lastConnectionTime > timerDelay && !isActivePoll && rfid_id != "") {
     httpGETRequest();
   }
 
   if (isActivePoll && toSend) {
-    decision = getUserResponse();
-    httpPOSTRequest();
+    decision = getUserResponse(millis());
+    Serial.println(decision);
+    httpPOSTRequest(decision);
   }
+
+  delay(100);
 
 }
 
@@ -219,7 +230,13 @@ void httpGETRequest() {
     if (httpResponseCode == 200) {
       poll = http.getString();
       Serial.println(poll);
-      isActivePoll = true;
+      if (poll != "{}") {
+        parseJsonString(poll);
+        isActivePoll = true;
+        display.setCursor(0, 0);
+        display.println(question);
+        display.display();
+      }
     }
   }
   else {
@@ -231,7 +248,7 @@ void httpGETRequest() {
   lastConnectionTime = millis();
 }
 
-void httpPOSTRequest() {
+void httpPOSTRequest(const bool decision) {
   if(WiFi.status() == WL_CONNECTED) {
       WiFiClient client;
       HTTPClient http;
@@ -251,7 +268,9 @@ void httpPOSTRequest() {
       
       // If you need an HTTP request with a content type: application/json, use the following:
       http.addHeader("Content-Type", "application/json");
-      int httpResponseCode = http.POST("{\"activity_id\":\"1\",\"user_card_number\":\"123\",\"vote\":\"True\"}");
+      String data = String("{\"activity_id\":") + String(activity_id) + ",\"user_card_number\":" + "\"" + String(rfid_id) + "\"" + ",\"vote\":" + String(decision) + "}";
+      Serial.println(data);
+      int httpResponseCode = http.POST(data);
 
       // If you need an HTTP request with a content type: text/plain
       //http.addHeader("Content-Type", "text/plain");
@@ -266,6 +285,10 @@ void httpPOSTRequest() {
     else {
       Serial.println("WiFi Disconnected");
     }
+    activity_id = 0;
+    question = "";
+    decision = false;
+    isActivePoll = false;
     lastConnectionTime = millis();
 }
 
@@ -289,11 +312,38 @@ void printDec(byte *buffer, byte bufferSize) {
   }
 }
 
-bool getUserResponse() {
-  while (true) {
+bool getUserResponse(const unsigned long start) {
+  Serial.println(millis() - start < duration);
+  toSend = true;
+  while (millis() - start < duration) {
     if (digitalRead(YES_BUTTON) == LOW) return true;
     if (digitalRead(NO_BUTTON) == LOW) return false;
     delay(50);
   }
-  
+  return false;
+}
+
+void parseJsonString(String jsonString) {
+    StaticJsonDocument<bufferSize> doc;
+    DeserializationError error = deserializeJson(doc, jsonString);
+    
+    if (error) {
+        Serial.print("Failed to parse JSON: ");
+        Serial.println(error.c_str());
+        return;
+    }
+
+    activity_id = doc["id"];
+    question = String(doc["question"]);
+    duration = long(doc["duration"]) * 1000;
+    group = doc["group"];
+
+    Serial.print("ID: ");
+    Serial.println(activity_id);
+    Serial.print("Question: ");
+    Serial.println(question);
+    Serial.print("Duration: ");
+    Serial.println(duration);
+    Serial.print("Group: ");
+    Serial.println(group);
 }
