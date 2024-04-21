@@ -1,3 +1,4 @@
+import json
 from typing import Any
 from sqlalchemy import CursorResult, create_engine, text
 
@@ -34,11 +35,14 @@ class DBInterface:
     def get_activities(self) -> CursorResult[Any]:
         with self._engine.connect() as conn:
             try:
-                return conn.execute(text(GET_ACTIVITIES_QUERY)).fetchall()
+                results = conn.execute(text(GET_ACTIVITIES_QUERY)).fetchall()
+                activity_dicts = [dict(row) for row in results]
+                json_result = json.dumps(activity_dicts)
+                return json_result
             except Exception as e:
                 print(e)
-                return e
-            
+                return json.dumps({"error": str(e)})
+                
     def get_active_activity(self, current_timestamp: int) -> CursorResult[Any]:
         with self._engine.connect() as conn:
             try:
