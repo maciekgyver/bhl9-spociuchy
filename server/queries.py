@@ -30,5 +30,10 @@ GET_ACTIVITIES_QUERY = """
 """
 
 GET_ACTIVE_ACTIVITIY_QUERY = """
-    SELECT * FROM public.activities WHERE expires_at > :current_timestamp;
+    SELECT activities.id, question, expires_at, activities.group_id FROM public.activities
+    JOIN public.groups ON activities.group_id = groups.id
+    JOIN public.users_groups ON groups.id = users_groups.group_id
+    JOIN public.users ON users_groups.user_id = users.id
+    WHERE public.users.card_number = :card_number AND expires_at > :current_timestamp
+    ORDER BY expires_at DESC LIMIT 1;
 """

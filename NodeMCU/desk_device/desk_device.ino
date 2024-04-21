@@ -25,6 +25,9 @@
 #define SS_PIN          D8
 #define BUZZ_PIN        D9
 
+#define YES_BUTTON      D0
+#define NO_BUTTON       D1
+
 /* Uncomment the initialize the I2C address , uncomment only one, If you get a totally blank screen try the other*/
 #define i2c_Address 0x3c //initialize with the I2C addr 0x3C Typically eBay OLED's
 //#define i2c_Address 0x3d //initialize with the I2C addr 0x3D Typically Adafruit OLED's
@@ -69,7 +72,7 @@ const char* ssid = SECRET_SSID;
 const char* password = SECRET_PASS;
 
 //Your Domain name with URL path or IP address with path
-const char* serverGETName = "http://192.168.151.97:8000/get-active-poll";
+String serverGETName = "http://192.168.151.97:8000/get-active-poll";
 const char* serverPOSTName = "http://192.168.151.97:8000/add-vote";
 
 // the following variables are unsigned longs because the time, measured in
@@ -96,6 +99,8 @@ void setup() {
 	rfid.PCD_Init();		// Init MFRC522
 
   pinMode(BUZZ_PIN, OUTPUT);
+  pinMode(YES_BUTTON, INPUT_PULLUP);
+  pinMode(NO_BUTTON, INPUT_PULLUP);
 
   WiFi.begin(ssid, password);
   Serial.println("Connecting");
@@ -122,11 +127,15 @@ void setup() {
 }
 
 void loop() {
-  
-  if (!toSend) getRFID();
+  if (rfid_id == "") getRFID();
 
-  if (millis() - lastConnectionTime > timerDelay) {
+  if (millis() - lastConnectionTime > timerDelay && !isActivePoll) {
     httpGETRequest();
+  }
+
+  if (isActivePoll && toSend) {
+    decision = getUserResponse();
+    httpPOSTRequest();
   }
 
 }
@@ -189,25 +198,29 @@ void getRFID() {
 
 }
 
-String httpGETRequest() {
+void httpGETRequest() {
   WiFiClient client;
   HTTPClient http;
+  String url = serverGETName + "/" + rfid_id;
 
   // Your IP address with path or Domain name with URL path 
-  http.begin(client, serverGETName);
+  http.begin(client, url);
 
   // If you need Node-RED/server authentication, insert user and password below
   //http.setAuthorization("REPLACE_WITH_SERVER_USERNAME", "REPLACE_WITH_SERVER_PASSWORD");
 
-  // Send HTTP POST request
   int httpResponseCode = http.GET();
 
-  String payload = "{}"; 
+  String poll = "{}"; 
 
   if (httpResponseCode>0) {
     Serial.print("HTTP Response code: ");
     Serial.println(httpResponseCode);
-    payload = http.getString();
+    if (httpResponseCode == 200) {
+      poll = http.getString();
+      Serial.println(poll);
+      isActivePoll = true;
+    }
   }
   else {
     Serial.print("Error code: ");
@@ -215,11 +228,10 @@ String httpGETRequest() {
   }
   // Free resources
   http.end();
-
-  return payload;
+  lastConnectionTime = millis();
 }
 
-String httpPOSTRequest() {
+void httpPOSTRequest() {
   if(WiFi.status() == WL_CONNECTED) {
       WiFiClient client;
       HTTPClient http;
@@ -255,7 +267,6 @@ String httpPOSTRequest() {
       Serial.println("WiFi Disconnected");
     }
     lastConnectionTime = millis();
-    return "";
 }
 
 /**
@@ -276,4 +287,13 @@ void printDec(byte *buffer, byte bufferSize) {
     Serial.print(' ');
     Serial.print(buffer[i], DEC);
   }
+}
+
+bool getUserResponse() {
+  while (true) {
+    if (digitalRead(YES_BUTTON) == LOW) return true;
+    if (digitalRead(NO_BUTTON) == LOW) return false;
+    delay(50);
+  }
+  
 }

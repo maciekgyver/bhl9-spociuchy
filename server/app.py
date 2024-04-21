@@ -1,4 +1,5 @@
-from fastapi import FastAPI
+from datetime import datetime
+from fastapi import FastAPI, Query
 import uvicorn
 
 from activity_model import ActivityModel
@@ -40,6 +41,7 @@ def get_activities():
     # ]
     db_interface = DBInterface()
     activities = db_interface.get_activities()
+    print(activities)
     return activities
 
 @app.get("/get-activity/{activity_id}")
@@ -75,13 +77,13 @@ def add_vote(vote: VoteModel):
         return {"message": "Vote received"}
     return {"message": "Failed to insert vote"}
 
-@app.get("/get-active-activity")
-def get_active_activity():
+@app.get("/get-active-poll/{card_number}")
+def get_active_poll(card_number: str):
     db_interface = DBInterface()
-    result = db_interface.get_active_activity()
+    result = db_interface.get_active_poll(datetime.now(), card_number)
     if not result:
-        return {"message": "Failed to get active activity"}
-    return {"message": "Active activity received", "activity": result}
+        return {}
+    return result
 
 
 if __name__ == "__main__":

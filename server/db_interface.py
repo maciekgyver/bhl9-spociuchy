@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 from typing import Any
 from sqlalchemy import CursorResult, create_engine, text
@@ -36,18 +37,22 @@ class DBInterface:
         with self._engine.connect() as conn:
             try:
                 results = conn.execute(text(GET_ACTIVITIES_QUERY)).fetchall()
+                print(results)
                 activity_dicts = [dict(row) for row in results]
+                print(activity_dicts)
                 json_result = json.dumps(activity_dicts)
                 return json_result
             except Exception as e:
                 print(e)
                 return json.dumps({"error": str(e)})
                 
-    def get_active_activity(self, current_timestamp: int) -> CursorResult[Any]:
+    def get_active_poll(self, current_timestamp: datetime, card_number: str) -> CursorResult[Any]:
         with self._engine.connect() as conn:
             try:
-                return conn.execute(text(GET_ACTIVE_ACTIVITIY_QUERY), current_timestamp=current_timestamp).fetchall()
+                result = conn.execute(text(GET_ACTIVE_ACTIVITIY_QUERY), {"current_timestamp": current_timestamp, "card_number": card_number}).fetchone()
+                if not result:
+                    return
+                return {"id": result[0], "question": result[1], "duration": (result[2] - datetime.now()), "group": result[3]}
             except Exception as e:
                 print(e)
                 return e
-    
