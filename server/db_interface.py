@@ -37,11 +37,13 @@ class DBInterface:
         with self._engine.connect() as conn:
             try:
                 results = conn.execute(text(GET_ACTIVITIES_QUERY)).fetchall()
+                if not results:
+                    return
                 print(results)
-                activity_dicts = [dict(row) for row in results]
-                print(activity_dicts)
-                json_result = json.dumps(activity_dicts)
-                return json_result
+                activity_dicts = [
+                    {"id": result[0], "question": result[1], "created_at": result[2], "expires_at": result[3], "group": result[4], "voted_yes": result[5] if result[5][0] else []} for result in results
+                ]
+                return activity_dicts
             except Exception as e:
                 print(e)
                 return json.dumps({"error": str(e)})

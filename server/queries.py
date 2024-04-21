@@ -26,11 +26,15 @@ VOTE_INSERT_QUERY = """
 """
 
 GET_ACTIVITIES_QUERY = """
-    SELECT * FROM public.activities;
+    SELECT activities.id, question, created_at, expires_at, activities.group_id, array_agg(users.first_name || ' ' || users.last_name) FROM public.activities
+    LEFT JOIN public.votes ON activities.id = votes.activity_id
+    LEFT JOIN public.users ON public.votes.user_card_number = users.card_number
+    GROUP BY activities.id, question, expires_at, activities.group_id
+    ;
 """
 
 GET_ACTIVE_ACTIVITIY_QUERY = """
-    SELECT activities.id, question, expires_at, activities.group_id FROM public.activities
+    SELECT activities.id, question, created_at, expires_at, activities.group_id FROM public.activities
     JOIN public.groups ON activities.group_id = groups.id
     JOIN public.users_groups ON groups.id = users_groups.group_id
     JOIN public.users ON users_groups.user_id = users.id
