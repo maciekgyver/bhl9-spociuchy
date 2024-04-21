@@ -1,26 +1,23 @@
+import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-const EVENT_MOCK = {
-  id: "1",
-  question: "What is the capital of France?",
-  timestamp: Date.now(),
-  group: "group 1",
-  accepted: ["Maciej Boruwa", "Sebastian Adidas"],
-  rejected: ["Jacek Placek", "Laura Dynia"],
-};
+import { ExistingEventData } from "../types/event.types";
+import { ServerUrls, getServerUrl } from "../config/serverUrls";
+import { EventContainer } from "../components/EventContainer";
+import { Paragraph, SubHeading } from "../components/Typography";
+import { Spinner } from "../components/icons/Spinner";
 
 interface ResponseColumnProps {
-  names: string[];
-  heading: string;
+  names?: string[];
+  heading?: string;
 }
 
 const ResponseColumn = ({ names, heading }: ResponseColumnProps) => {
   return (
     <div className="flex-1 flex flex-col items-center gap-y-6">
-      <h3 className="text-xl sm:text-2xl">{heading}</h3>
+      <SubHeading className="text-green-500">{heading}</SubHeading>
       <div className="flex flex-col items-center gap-y-1">
-        {names.map((name) => (
-          <p>{name}</p>
+        {names?.map((name) => (
+          <Paragraph>{name}</Paragraph>
         ))}
       </div>
     </div>
@@ -29,14 +26,51 @@ const ResponseColumn = ({ names, heading }: ResponseColumnProps) => {
 
 export const EventPage = () => {
   const { eventId } = useParams<{ eventId: string }>();
+
+  const [event, setEvent] = useState<ExistingEventData>();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchActivity = useCallback(async () => {
+    try {
+      const response = await fetch(
+        getServerUrl(ServerUrls.GET_ACTIVITY, eventId)
+      );
+      if (!response.ok) {
+        throw new Error(`HTTP error: Status ${response.status}`);
+      }
+      let postsData = await response.json();
+      setEvent(postsData.id ? postsData : undefined);
+      setError(null);
+    } catch (err: any) {
+      setError(err.message);
+      setEvent(undefined);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchActivity();
+  }, []);
+
+  if (loading) {
+    return <Spinner />;
+  }
+
+  if (error) {
+    return <SubHeading className="text-red-500">{error}</SubHeading>;
+  }
+
+  if (!event) {
+    return <SubHeading>Event not found</SubHeading>;
+  }
+
   return (
-    <div className="flex flex-col w-full items-center gap-y-8">
-      <h1 className="text-4xl sm:text-6xl">Event page {eventId}</h1>
-      <h2 className="text-2xl sm:text-4xl">{EVENT_MOCK.question}</h2>
-      <p className="text-xl sm:text-2xl">{EVENT_MOCK.group}</p>
+    <div className="flex flex-col w-full items-center gap-y-6 sm:gap-y-8">
+      <EventContainer eventData={event} />
       <div className="flex w-full">
-        <ResponseColumn heading="Accepted" names={EVENT_MOCK.accepted} />
-        <ResponseColumn heading="Rejected" names={EVENT_MOCK.rejected} />
+        <ResponseColumn heading="People who accepted" names={event.voted_yes} />
       </div>
     </div>
   );
