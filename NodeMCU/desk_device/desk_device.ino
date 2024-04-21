@@ -28,7 +28,7 @@
 #define BUZZ_PIN        D9
 
 #define YES_BUTTON      D0
-#define NO_BUTTON       D1
+#define NO_BUTTON       D3
 
 /* Uncomment the initialize the I2C address , uncomment only one, If you get a totally blank screen try the other*/
 #define i2c_Address 0x3c //initialize with the I2C addr 0x3C Typically eBay OLED's
@@ -123,13 +123,12 @@ void setup() {
   display.display();
   display.clearDisplay();
 
-  display.setTextSize(1);
+  display.setTextSize(2);
   display.setTextColor(SH110X_WHITE);
   display.setCursor(0, 0);
-  display.println("SpocSystems");
+  display.println("SpocSystem");
+  display.println("Use card");
   display.display();
-  delay(1000);
-  display.clearDisplay();
  
   Serial.println("Timer set to 5 seconds (timerDelay variable), it will take 5 seconds before publishing the first reading.");
 }
@@ -198,6 +197,14 @@ void getRFID() {
     printDec(rfid.uid.uidByte, rfid.uid.size);
     Serial.println();
     Serial.println(rfid_id);
+
+    display.clearDisplay();
+    display.setCursor(0, 0);
+    display.println("Authorised");
+    display.println("");
+    display.println("Waiting");
+    display.println("for poll");
+    display.display();
   }
   else Serial.println(F("Card read previously."));
 
@@ -233,7 +240,9 @@ void httpGETRequest() {
       if (poll != "{}") {
         parseJsonString(poll);
         isActivePoll = true;
+        display.clearDisplay();
         display.setCursor(0, 0);
+        display.println("   Poll   ");
         display.println(question);
         display.display();
       }
@@ -278,7 +287,15 @@ void httpPOSTRequest(const bool decision) {
      
       Serial.print("HTTP Response code: ");
       Serial.println(httpResponseCode);
-        
+      
+      display.clearDisplay();
+      display.setCursor(0, 0);
+      display.println("Authorised");
+      display.println("");
+      display.println("Waiting");
+      display.println("for poll");
+      display.display();
+
       // Free resources
       http.end();
     }
@@ -287,7 +304,6 @@ void httpPOSTRequest(const bool decision) {
     }
     activity_id = 0;
     question = "";
-    decision = false;
     isActivePoll = false;
     lastConnectionTime = millis();
 }
