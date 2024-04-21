@@ -9,6 +9,8 @@ from vote_model import VoteModel
 
 app = FastAPI()
 
+send_robot = {"action": False}
+
 
 @app.get("/")
 def read_root():
@@ -41,6 +43,8 @@ def add_activity(activity: ActivityModel):
 def add_vote(vote: VoteModel):
     db_interface = DBInterface()
     result = db_interface.insert_vote(vote)
+    if not vote.vote:
+        send_robot["action"] = True    
     if not result:
         return {"message": "Vote received"}
     return {"message": "Failed to insert vote"}
@@ -68,6 +72,13 @@ def get_groups():
     if not result:
         return {}
     return result
+
+@app.post("/start_program")
+def start_program():
+    if not send_robot["action"]:
+        return {"action": False}
+    send_robot["action"] = False
+    return {"action": True}
 
 
 if __name__ == "__main__":
