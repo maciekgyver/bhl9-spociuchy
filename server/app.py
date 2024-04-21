@@ -16,29 +16,6 @@ def read_root():
 
 @app.get("/get-activities")
 def get_activities():
-    # activities = [
-    # {
-    #     "id": 1,
-    #     "question": "question 1",
-    #     "created_at": 1713634879498,
-    #     "expires_at": 1713634879498,
-    #     "group": "group_1"
-    # },
-    # {
-    #     "id": 2,
-    #     "question": "test question 2",
-    #     "created_at": 1713634694439,
-    #     "expires_at": 1713634694439,
-    #     "group": "group_1"
-    # },
-    # {
-    #     "id": 3,
-    #     "question": "test question 3",
-    #     "created_at": 1713634694439,
-    #     "expires_at": 1713634694439,
-    #     "group": "group_1"
-    # },
-    # ]
     db_interface = DBInterface()
     activities = db_interface.get_activities()
     print(activities)
@@ -46,20 +23,11 @@ def get_activities():
 
 @app.get("/get-activity/{activity_id}")
 def get_activity(activity_id: int):
-    activity = {
-        "id": 1,
-        "question": "question 1",
-        "timestamp": 1713634879498,
-        "group": "group_1",
-        "accepted": ["Maciej Boruwa", "Sebastian Adidas"],
-        "rejected": ["Jacek Placek", "Laura Dynia"]
-        }
-    return activity
-
-@app.get("/get-groups")
-def get_groups():
-    groups = ["group_1", "group_2", "group_3"]
-    return groups
+    db_interface = DBInterface()
+    result = db_interface.get_activitie(activity_id)
+    if not result:
+        return {}
+    return result
 
 @app.post("/add-activity")
 def add_activity(activity: ActivityModel):
@@ -81,6 +49,22 @@ def add_vote(vote: VoteModel):
 def get_active_poll(card_number: str):
     db_interface = DBInterface()
     result = db_interface.get_active_poll(datetime.now(), card_number)
+    if not result:
+        return {}
+    return result
+
+@app.get("/get-active-poll")
+def get_active_poll():
+    db_interface = DBInterface()
+    result = db_interface.get_active_poll(datetime.now())
+    if not result:
+        return {}
+    return result
+
+@app.get("/get-groups")
+def get_groups():
+    db_interface = DBInterface()
+    result = db_interface.get_groups()
     if not result:
         return {}
     return result
