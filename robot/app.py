@@ -1,33 +1,44 @@
 from robot import Robot
 from motor import Motor
 from interpreter import Interpreter
+from speaker import Speaker
+import argparse
 
 
 def main():
-    LEFT_PWM = 13
-    LEFT_FORWARD = 26
-    LEFT_REVERSE = 19
+    parser = argparse.ArgumentParser(description="This script demonstrates argument parsing.")
+    parser.add_argument("program_file", help="Path to the program file")
 
-    RIGHT_PWM = 16
-    RIGHT_FORWARD = 21
-    RIGHT_REVERSE = 20
+    args = parser.parse_args()
+    program_file = args.program_file
+
+    LEFT_MOTOR_PWM = 13
+    LEFT_MOTOR_FORWARD = 26
+    LEFT_MOTOR_REVERSE = 19
+
+    RIGHT_MOTOR_PWM = 16
+    RIGHT_MOTOR_FORWARD = 21
+    RIGHT_MOTOR_REVERSE = 20
+
+    SPEAKER_PIN = 12
 
     left_motor = Motor(
-        LEFT_PWM,
-        LEFT_FORWARD,
-        LEFT_REVERSE
+        LEFT_MOTOR_PWM,
+        LEFT_MOTOR_FORWARD,
+        LEFT_MOTOR_REVERSE
     )
 
     right_motor = Motor(
-        RIGHT_PWM,
-        RIGHT_FORWARD,
-        RIGHT_REVERSE
+        RIGHT_MOTOR_PWM,
+        RIGHT_MOTOR_FORWARD,
+        RIGHT_MOTOR_REVERSE
     )
 
-    robot = Robot(left_motor, right_motor)
-    interpreter = Interpreter(robot, "program.json")
-    interpreter.execute_program()
+    speaker = Speaker(SPEAKER_PIN)
 
+    robot = Robot(left_motor, right_motor, speaker)
+    interpreter = Interpreter(robot, program_file)
+    interpreter.execute_program()
 
 if __name__ == "__main__":
     main()

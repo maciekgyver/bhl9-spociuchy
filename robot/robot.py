@@ -7,9 +7,10 @@ MAGIC_CONSTANT = 1.0
  
 
 class Robot:
-	def __init__(self, left_motor, right_motor):
+	def __init__(self, left_motor, right_motor, speaker):
 		self._left_motor = left_motor
 		self._right_motor = right_motor
+		self._speaker = speaker
  
 	def stop(self):
 		self._left_motor.stop()
@@ -30,35 +31,10 @@ class Robot:
 	def spin_right(self, value):
 		self._left_motor.forward_drive(value * MAGIC_CONSTANT)
 		self._right_motor.reverse_drive(value)
+
+	def play_melody(self, melody):
+		self._speaker.play_melody(melody)
+
+	def turn_off_spreaker(self):
+		self._speaker.turn_off()
  
-# def forwardTurnLeft():
-# 	forwardLeft.value = True
-# 	reverseLeft.value = False
-# 	forwardRight.value = True
-# 	reverseRight.value = False
-# 	driveLeft.value = 0.2
-# 	driveRight.value = 0.8
- 
-# def forwardTurnRight():
-# 	forwardLeft.value = True
-# 	reverseLeft.value = False
-# 	forwardRight.value = True
-# 	reverseRight.value = False
-# 	driveLeft.value = 0.8
-# 	driveRight.value = 0.2
- 
-# def reverseTurnLeft():
-# 	forwardLeft.value = False
-# 	reverseLeft.value = True
-# 	forwardRight.value = False
-# 	reverseRight.value = True
-# 	driveLeft.value = 0.2
-# 	driveRight.value = 0.8
- 
-# def reverseTurnRight():
-# 	forwardLeft.value = False
-# 	reverseLeft.value = True
-# 	forwardRight.value = False
-# 	reverseRight.value = True
-# 	driveLeft.value = 0.8
-# 	driveRight.value = 0.2

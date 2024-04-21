@@ -22,4 +22,9 @@ class Interpreter:
                     self._robot.spin_left(i["speed"])
                 case "SR":
                     self._robot.spin_right(i["speed"])
+                case "P":
+                    self._robot.play_melody(i["melody"])
+                    self._robot.turn_off_spreaker()
+                    continue
             sleep(i["time"])
+            self._robot.stop()
