@@ -10,11 +10,11 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 export const Input = React.forwardRef(
   ({ className, error, ...props }: InputProps, ref: any) => {
     return (
-      <div className="w-full">
+      <div className="w-full max-w-4xl">
         <input
           ref={ref}
           className={clsx(
-            "w-full p-2 rounded-xl transition-all",
+            "w-full p-2 rounded-xl transition-all ",
             {
               "border border-red-600 outline outline-red-600": !!error,
             },

@@ -38,7 +38,7 @@ export const EventHistoryPage = () => {
   }
 
   return (
-    <div className="flex flex-col gap-y-4 w-full">
+    <div className="flex flex-col items-center gap-y-4 w-full px-4 py-12">
       {events.map((event) => (
         <EventContainer key={event.id} hasLink eventData={event} />
       ))}

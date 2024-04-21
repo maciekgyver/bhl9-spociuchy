@@ -11,4 +11,5 @@ export type ExistingEventData = {
   group: string;
   created_at: number;
   expires_at: number;
+  voted_yes: string[];
 };

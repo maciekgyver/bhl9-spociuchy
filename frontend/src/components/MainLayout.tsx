@@ -11,7 +11,7 @@ export const MainLayout = ({}: MainLayoutProps) => {
       <div className="flex flex-1 justify-center items-center container px-4">
         <Outlet />
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

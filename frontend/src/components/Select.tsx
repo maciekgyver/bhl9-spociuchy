@@ -16,7 +16,7 @@ export const Select = React.forwardRef(
   ({ className, options, ...props }: SelectProps, ref: any) => {
     return (
       <select
-        className={clsx("w-full p-2 rounded-xl", className)}
+        className={clsx("w-full p-2 rounded-xl max-w-4xl", className)}
         ref={ref}
         {...props}
       >
