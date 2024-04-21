@@ -39,6 +39,10 @@ export const EventHistoryPage = () => {
     return <Paragraph className="text-red-500">{error}</Paragraph>;
   }
 
+  if (!events || !events[0].id) {
+    return <Paragraph className="text-red-500">Something went wrong</Paragraph>;
+  }
+
   return (
     <div className="flex flex-col gap-y-6 sm:gap-y-8 w-full items-center py-8 sm:py-12">
       <MainHeading>Event history</MainHeading>
