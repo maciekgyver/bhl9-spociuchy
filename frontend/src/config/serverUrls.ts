@@ -1,5 +1,4 @@
 const SERVER_URL = "/api";
-// const SERVER_URL = "http://192.168.151.97:8000";
 
 export enum ServerUrls {
   GET_ACTIVITIES = "/get-activities",

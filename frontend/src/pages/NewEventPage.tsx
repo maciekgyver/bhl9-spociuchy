@@ -6,6 +6,7 @@ import { getCurrentDateDelayed } from "../utils/getDate";
 import { useCallback, useEffect, useState } from "react";
 import { ServerUrls, getServerUrl } from "../config/serverUrls";
 import { MainHeading, Paragraph, SubHeading } from "../components/Typography";
+import { Spinner } from "../components/icons/Spinner";
 
 type NewEventInputs = {
   question: string;
@@ -110,7 +111,7 @@ export const NewEventPage = () => {
   const { question: questionError } = errors;
 
   if (groupsLoading) {
-    return <Paragraph>loading...</Paragraph>;
+    return <Spinner />;
   }
 
   if (groupsError) {
@@ -122,12 +123,12 @@ export const NewEventPage = () => {
   }
 
   return (
-    <form
-      className="flex flex-col w-full gap-y-8 items-center"
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <div className="flex w-full h-full items-center flex-col gap-y-6 sm:gap-y-8 px-2">
       <MainHeading>Add a new event</MainHeading>
-      <div className="flex flex-col w-full gap-y-3 items-center">
+      <form
+        className="flex flex-col flex-1 w-full gap-y-3 items-center"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <Input
           error={questionError?.message}
           {...register("question", {
@@ -145,12 +146,16 @@ export const NewEventPage = () => {
           options={TIME_OPTIONS}
           {...register("delay", { required: true, valueAsNumber: true })}
         />
-        {submitError && <p className="text-red-500">{submitError}</p>}
-        {submitLoading && <p>Loading...</p>}
-        <button className="w-full max-w-4xl" disabled={submitLoading}>
-          Submit
+        {submitError && (
+          <Paragraph className="text-red-500">{submitError}</Paragraph>
+        )}
+        <button
+          className="w-full max-w-4xl flex justify-center"
+          disabled={submitLoading}
+        >
+          {submitLoading ? <Spinner size="small" /> : "Submit"}
         </button>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 };

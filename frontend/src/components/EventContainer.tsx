@@ -2,6 +2,7 @@ import Countdown from "react-countdown";
 import { ExistingEventData } from "../types/event.types";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Paragraph, SubHeading } from "./Typography";
 
 interface EventInfoProps {
   eventData: ExistingEventData;
@@ -25,9 +26,9 @@ const EventInfo = ({ eventData }: EventInfoProps) => {
 
   return (
     <>
-      <h3 className="text-2xl sm:text-3xl">{question}</h3>
-      <p className="text-xl sm:text-2xl">{group}</p>
-      <div className="text-2xl sm:text-3xl">
+      <SubHeading>{question}</SubHeading>
+      <Paragraph>Group: {group}</Paragraph>
+      <div className="text-xl sm:text-3xl">
         {isEventActive ? (
           <Countdown
             date={expires_at_date.getTime()}

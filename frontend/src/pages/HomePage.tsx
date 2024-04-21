@@ -3,6 +3,7 @@ import { EventContainer } from "../components/EventContainer";
 import { ExistingEventData } from "../types/event.types";
 import { ServerUrls, getServerUrl } from "../config/serverUrls";
 import { MainHeading, Paragraph, SubHeading } from "../components/Typography";
+import { Spinner } from "../components/icons/Spinner";
 
 function HomePage() {
   const [event, setEvent] = useState<ExistingEventData>();
@@ -16,7 +17,7 @@ function HomePage() {
         throw new Error(`HTTP error: Status ${response.status}`);
       }
       let eventData = await response.json();
-      setEvent(eventData);
+      setEvent(eventData.id ? eventData : undefined);
       setError(null);
     } catch (err: any) {
       setError(err.message);
@@ -31,7 +32,7 @@ function HomePage() {
   }, []);
 
   if (loading) {
-    return <Paragraph>loading...</Paragraph>;
+    return <Spinner />;
   }
 
   if (error) {
@@ -43,7 +44,7 @@ function HomePage() {
   }
 
   return (
-    <div className="w-full flex flex-col gap-y-8 items-center">
+    <div className="w-full flex flex-col gap-y-6 sm:gap-y-8 items-center">
       <MainHeading>Currently active event:</MainHeading>
       <EventContainer hasLink eventData={event} />
     </div>

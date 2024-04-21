@@ -3,7 +3,8 @@ import { useParams } from "react-router-dom";
 import { ExistingEventData } from "../types/event.types";
 import { ServerUrls, getServerUrl } from "../config/serverUrls";
 import { EventContainer } from "../components/EventContainer";
-import { SubHeading } from "../components/Typography";
+import { Paragraph, SubHeading } from "../components/Typography";
+import { Spinner } from "../components/icons/Spinner";
 
 interface ResponseColumnProps {
   names?: string[];
@@ -13,10 +14,10 @@ interface ResponseColumnProps {
 const ResponseColumn = ({ names, heading }: ResponseColumnProps) => {
   return (
     <div className="flex-1 flex flex-col items-center gap-y-6">
-      <h3 className="text-xl sm:text-2xl">{heading}</h3>
+      <SubHeading className="text-green-500">{heading}</SubHeading>
       <div className="flex flex-col items-center gap-y-1">
         {names?.map((name) => (
-          <p>{name}</p>
+          <Paragraph>{name}</Paragraph>
         ))}
       </div>
     </div>
@@ -54,7 +55,7 @@ export const EventPage = () => {
   }, []);
 
   if (loading) {
-    return <SubHeading>loading...</SubHeading>;
+    return <Spinner />;
   }
 
   if (error) {
@@ -66,7 +67,7 @@ export const EventPage = () => {
   }
 
   return (
-    <div className="flex flex-col w-full items-center gap-y-8">
+    <div className="flex flex-col w-full items-center gap-y-6 sm:gap-y-8">
       <EventContainer eventData={event} />
       <div className="flex w-full">
         <ResponseColumn heading="People who accepted" names={event.voted_yes} />
