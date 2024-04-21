@@ -1,2 +1,5 @@
 server/.venv/*
 server/__pycache__/*
+
+robot/.venv/*
+robot/__pycache__/*
